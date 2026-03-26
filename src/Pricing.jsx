@@ -108,19 +108,21 @@ export default function Pricing() {
       <nav className="relative border-b border-steel/10 bg-white/50 backdrop-blur-md">
         <div className="mx-auto max-w-5xl px-4 py-4 sm:px-8">
           <div className="flex items-center justify-between">
-            <div className="font-display text-2xl font-bold text-ink">Cerbro</div>
-            <div className="flex gap-6">
-              <a
-                href="/"
-                className="text-sm font-semibold text-steel hover:text-ink transition"
-              >
+            <a href="/" className="font-display text-2xl font-bold text-ink hover:text-steel transition">
+              Cerbro
+            </a>
+            <div className="flex gap-6 items-center">
+              <a href="/" className="text-sm font-semibold text-steel hover:text-ink transition">
                 Verify
               </a>
-              <a
-                href="/pricing"
-                className="text-sm font-semibold text-ink transition"
-              >
+              <a href="/pricing" className="text-sm font-semibold text-ink transition">
                 Pricing
+              </a>
+              <a href="/login" className="text-sm font-semibold text-steel hover:text-ink transition">
+                Sign In
+              </a>
+              <a href="/register" className="text-sm font-semibold text-white bg-mint hover:bg-mint/90 px-4 py-1.5 rounded-lg transition">
+                Sign Up
               </a>
             </div>
           </div>

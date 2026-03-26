@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import QRCode from "qrcode";
 import Pricing from "./Pricing";
+import Login from "./Login";
+import Register from "./Register";
 
 const API_DIRECT_URL = import.meta.env.VITE_CERT_VERIFY_API || "";
 const DEPLOYMENT_ID = import.meta.env.VITE_DEPLOYMENT_ID || "";
@@ -109,6 +111,16 @@ export default function App() {
   // Route: /pricing
   if (currentPath === "/pricing") {
     return <Pricing />;
+  }
+
+  // Route: /login
+  if (currentPath === "/login") {
+    return <Login />;
+  }
+
+  // Route: /register
+  if (currentPath === "/register") {
+    return <Register />;
   }
 
   // Default route: / and /verify - Certificate Verifier
@@ -539,7 +551,7 @@ function CertificateVerifier() {
         <div className="mx-auto max-w-5xl px-4 py-4 sm:px-8">
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold text-ink">Cerbro</div>
-            <div className="flex gap-6">
+            <div className="flex gap-6 items-center">
               <a
                 href="/"
                 className="text-sm font-semibold text-steel hover:text-ink transition"
@@ -551,6 +563,18 @@ function CertificateVerifier() {
                 className="text-sm font-semibold text-steel hover:text-ink transition"
               >
                 Pricing
+              </a>
+              <a
+                href="/login"
+                className="text-sm font-semibold text-steel hover:text-ink transition"
+              >
+                Sign In
+              </a>
+              <a
+                href="/register"
+                className="text-sm font-semibold text-white bg-mint hover:bg-mint/90 px-4 py-1.5 rounded-lg transition"
+              >
+                Sign Up
               </a>
             </div>
           </div>
