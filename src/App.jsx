@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import QRCode from "qrcode";
+import Pricing from "./Pricing";
 
 const API_DIRECT_URL = import.meta.env.VITE_CERT_VERIFY_API || "";
 const DEPLOYMENT_ID = import.meta.env.VITE_DEPLOYMENT_ID || "";
@@ -103,6 +104,18 @@ function ConfettiBurst({ burstKey }) {
 }
 
 export default function App() {
+  const currentPath = window.location.pathname;
+  
+  // Route: /pricing
+  if (currentPath === "/pricing") {
+    return <Pricing />;
+  }
+
+  // Default route: / and /verify - Certificate Verifier
+  return <CertificateVerifier />;
+}
+
+function CertificateVerifier() {
   const scannerRef = useRef(null);
   const [scannerOpen, setScannerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -520,6 +533,29 @@ export default function App() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(244,162,97,.33),transparent_30%),radial-gradient(circle_at_83%_12%,rgba(42,157,143,.25),transparent_28%),linear-gradient(160deg,#f7f6f2_0%,#eef3f5_46%,#dbe5ea_100%)]" />
       <div className="pointer-events-none absolute -right-20 top-24 h-64 w-64 rounded-full border border-ink/15" />
       <div className="pointer-events-none absolute -left-24 bottom-12 h-72 w-72 rounded-full border border-ink/20" />
+
+      {/* Navigation */}
+      <nav className="relative border-b border-steel/10 bg-white/50 backdrop-blur-md">
+        <div className="mx-auto max-w-5xl px-4 py-4 sm:px-8">
+          <div className="flex items-center justify-between">
+            <div className="text-2xl font-bold text-ink">Cerbro</div>
+            <div className="flex gap-6">
+              <a
+                href="/"
+                className="text-sm font-semibold text-steel hover:text-ink transition"
+              >
+                Verify
+              </a>
+              <a
+                href="/pricing"
+                className="text-sm font-semibold text-steel hover:text-ink transition"
+              >
+                Pricing
+              </a>
+            </div>
+          </div>
+        </div>
+      </nav>
 
       <main className="relative mx-auto flex w-full max-w-5xl flex-col px-4 pb-12 pt-8 sm:px-8">
         <header className="mb-10 animate-rise rounded-3xl border border-steel/10 bg-white/70 p-6 shadow-soft backdrop-blur-md sm:p-8">
