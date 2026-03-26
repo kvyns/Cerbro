@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
+import QRCode from "qrcode";
 
 const API_DIRECT_URL = import.meta.env.VITE_CERT_VERIFY_API || "";
 const DEPLOYMENT_ID = import.meta.env.VITE_DEPLOYMENT_ID || "";
 const API_URL = import.meta.env.DEV && DEPLOYMENT_ID ? "/api/verify" : API_DIRECT_URL;
 const QR_REGION_ID = "qr-reader-region";
+const PUBLIC_VERIFY_BASE = (import.meta.env.VITE_PUBLIC_VERIFY_BASE_URL || "https://cerbro.vercel.app").replace(/\/$/, "");
 
 function sanitizeCertificateId(raw) {
   return (raw || "")
@@ -108,6 +110,7 @@ export default function App() {
   const [scanText, setScanText] = useState("");
   const [result, setResult] = useState(null);
   const [confettiBurst, setConfettiBurst] = useState(0);
+  const [certificatePreviewUrl, setCertificatePreviewUrl] = useState("");
 
   const statusText = loading ? "Verifying" : error ? "Invalid" : result ? "Verified" : "Awaiting scan";
 
@@ -124,6 +127,205 @@ export default function App() {
       ["Email", result.email],
     ];
   }, [result]);
+
+  async function buildCertificateImageDataUrl(data) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1600;
+    canvas.height = 1100;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return "";
+
+    const qrValue = data.verificationUrl || window.location.href;
+    let qrDataUrl = "";
+    try {
+      qrDataUrl = await QRCode.toDataURL(qrValue, {
+        margin: 1,
+        width: 280,
+        color: {
+          dark: "#B8860B",
+          light: "#FFFFFF",
+        },
+      });
+    } catch {
+      qrDataUrl = "";
+    }
+
+    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    grad.addColorStop(0, "#fffaf0");
+    grad.addColorStop(1, "#f8f1dd");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Subtle radial highlights for depth.
+    const glowA = ctx.createRadialGradient(260, 220, 40, 260, 220, 300);
+    glowA.addColorStop(0, "rgba(212,162,76,0.16)");
+    glowA.addColorStop(1, "rgba(212,162,76,0)");
+    ctx.fillStyle = glowA;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const glowB = ctx.createRadialGradient(1320, 860, 50, 1320, 860, 320);
+    glowB.addColorStop(0, "rgba(31,58,95,0.14)");
+    glowB.addColorStop(1, "rgba(31,58,95,0)");
+    ctx.fillStyle = glowB;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Soft geometric pattern in the background.
+    ctx.strokeStyle = "rgba(184,134,11,0.18)";
+    ctx.lineWidth = 1;
+    for (let x = 120; x < canvas.width - 80; x += 120) {
+      ctx.beginPath();
+      ctx.moveTo(x, 120);
+      ctx.lineTo(x - 60, canvas.height - 120);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = "#1f3a5f";
+    ctx.lineWidth = 14;
+    ctx.strokeRect(32, 32, canvas.width - 64, canvas.height - 64);
+
+    ctx.strokeStyle = "#b8860b";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(72, 72, canvas.width - 144, canvas.height - 144);
+
+    // Decorative corner marks.
+    ctx.strokeStyle = "#b8860b";
+    ctx.lineWidth = 4;
+    const corner = 44;
+    const left = 86;
+    const top = 86;
+    const right = canvas.width - 86;
+    const bottom = canvas.height - 86;
+
+    ctx.beginPath();
+    ctx.moveTo(left, top + corner);
+    ctx.lineTo(left, top);
+    ctx.lineTo(left + corner, top);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(right - corner, top);
+    ctx.lineTo(right, top);
+    ctx.lineTo(right, top + corner);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(left, bottom - corner);
+    ctx.lineTo(left, bottom);
+    ctx.lineTo(left + corner, bottom);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(right - corner, bottom);
+    ctx.lineTo(right, bottom);
+    ctx.lineTo(right, bottom - corner);
+    ctx.stroke();
+
+    ctx.fillStyle = "#1f3a5f";
+    ctx.font = "700 66px 'Times New Roman'";
+    ctx.textAlign = "center";
+    ctx.fillText("Digital Certificate", canvas.width / 2, 190);
+
+    // Watermark brand text.
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2 + 40);
+    ctx.rotate((-12 * Math.PI) / 180);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(31,58,95,0.06)";
+    ctx.font = "700 150px 'Times New Roman'";
+    ctx.fillText("CERBRO", 0, 0);
+    ctx.restore();
+
+    ctx.fillStyle = "#6b7280";
+    ctx.font = "500 30px 'Times New Roman'";
+    ctx.fillText("This certificate is presented to", canvas.width / 2, 258);
+
+    ctx.strokeStyle = "#d4a24c";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(390, 290);
+    ctx.lineTo(1210, 290);
+    ctx.stroke();
+
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "700 62px 'Times New Roman'";
+    ctx.fillText(data.name || "-", canvas.width / 2, 392);
+
+    ctx.fillStyle = "#475569";
+    ctx.font = "500 34px 'Times New Roman'";
+    ctx.fillText("for securing", canvas.width / 2, 455);
+
+    ctx.fillStyle = "#1f3a5f";
+    ctx.font = "700 48px 'Times New Roman'";
+    ctx.fillText(`${data.position || "-"} position`, canvas.width / 2, 520);
+
+    ctx.fillStyle = "#334155";
+    ctx.font = "600 36px 'Times New Roman'";
+    ctx.fillText(`in ${data.event || "Achievement"}`, canvas.width / 2, 572);
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#1e293b";
+    ctx.font = "600 24px 'Segoe UI'";
+    ctx.fillText(`Certificate ID: ${data.certificateId || "-"}`, 140, 680);
+    ctx.fillText(`Entry Number: ${data.entryNumber || "-"}`, 140, 730);
+    ctx.fillText(`Timestamp: ${data.timestamp || "-"}`, 140, 780);
+    ctx.fillText(`Email: ${data.email || "-"}`, 140, 830);
+
+    if (qrDataUrl) {
+      const qrImage = await new Promise((resolve) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => resolve(null);
+        image.src = qrDataUrl;
+      });
+
+      if (qrImage) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(canvas.width - 430, 600, 300, 300);
+        ctx.strokeStyle = "#d4a24c";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(canvas.width - 430, 600, 300, 300);
+        ctx.drawImage(qrImage, canvas.width - 410, 620, 260, 260);
+        ctx.fillStyle = "#1f3a5f";
+        ctx.textAlign = "center";
+        ctx.font = "600 20px 'Segoe UI'";
+        ctx.fillText("Scan to Verify", canvas.width - 280, 915);
+      }
+    }
+
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#1f3a5f";
+    ctx.font = "700 22px 'Segoe UI'";
+    ctx.fillText("Status: VERIFIED", canvas.width - 140, 950);
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#64748b";
+    ctx.font = "500 19px 'Segoe UI'";
+    ctx.fillText("Issued securely via Cerbro digital verification.", 140, 950);
+
+    return canvas.toDataURL("image/png");
+  }
+
+  async function downloadDigitalCertificate() {
+    if (!result) return;
+
+    const safeName = (result.name || "user")
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-zA-Z0-9-_]/g, "_");
+    const safeEvent = (result.event || "event")
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-zA-Z0-9-_]/g, "_");
+    const safeId = (result.certificateId || "certificate").replace(/[^a-zA-Z0-9-_]/g, "_");
+    const url = certificatePreviewUrl || (await buildCertificateImageDataUrl(result));
+    if (!url) return;
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${safeName}-${safeEvent}-${safeId}.png`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+  }
 
   async function stopScanner() {
     if (!scannerRef.current) {
@@ -207,10 +409,6 @@ export default function App() {
         return;
       }
 
-      const normalized = normalizeData(data.data || data, payload);
-      setResult(normalized);
-      setConfettiBurst((value) => value + 1);
-
       const params = new URLSearchParams(window.location.search);
       params.set("id", payload.id);
       params.set("ts", payload.ts);
@@ -219,6 +417,15 @@ export default function App() {
       }
       params.set("sig", payload.sig);
       const query = params.toString();
+
+      const normalized = {
+        ...normalizeData(data.data || data, payload),
+        keyId: payload.kid || "",
+        signature: payload.sig || "",
+        verificationUrl: `${PUBLIC_VERIFY_BASE}/verify?${query}`,
+      };
+      setResult(normalized);
+      setConfettiBurst((value) => value + 1);
       window.history.replaceState({}, "", `${window.location.pathname}?${query}`);
     } catch (err) {
       setError(err.message || "Unable to verify certificate right now.");
@@ -284,6 +491,28 @@ export default function App() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    async function generatePreview() {
+      if (!result) {
+        setCertificatePreviewUrl("");
+        return;
+      }
+      const preview = await buildCertificateImageDataUrl(result);
+      if (active) {
+        setCertificatePreviewUrl(preview);
+      }
+    }
+
+    generatePreview();
+
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result]);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-fog font-body text-ink">
@@ -367,6 +596,20 @@ export default function App() {
             </span>
           </div>
 
+          {result ? (
+            <div className="mb-5 rounded-2xl border border-mint/20 bg-gradient-to-r from-mint/10 via-white to-amber/10 p-4">
+              <p className="text-sm font-semibold text-ink">Certificate image ready</p>
+              <p className="mt-1 text-sm text-steel/80">This certificate includes complete details and a verification QR.</p>
+              <button
+                type="button"
+                onClick={downloadDigitalCertificate}
+                className="mt-3 rounded-xl bg-mint px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-mint/90"
+              >
+                Download Certificate Image
+              </button>
+            </div>
+          ) : null}
+
           {!result ? (
             <p className={`text-sm ${error ? "text-danger" : "text-steel/80"}`}>
               {error || "Scan your certificate QR code or paste the URL above to verify."}
@@ -383,6 +626,18 @@ export default function App() {
                   <p className="mt-1 break-words font-semibold text-ink">{value || "-"}</p>
                 </article>
               ))}
+
+              {certificatePreviewUrl ? (
+                <article className="sm:col-span-2 rounded-xl border border-steel/10 bg-white p-4">
+                  <p className="mb-3 text-xs uppercase tracking-wide text-steel/70">Digital Certificate Preview</p>
+                  <img
+                    src={certificatePreviewUrl}
+                    alt="Digital certificate preview"
+                    className="w-full rounded-lg border border-steel/10"
+                  />
+                  <p className="mt-3 text-sm text-steel/80">Formal certificate preview with embedded QR verification.</p>
+                </article>
+              ) : null}
             </div>
           )}
         </section>
