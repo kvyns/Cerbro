@@ -6,6 +6,20 @@ Live → **[cerbro.vercel.app](https://cerbro.vercel.app)**
 
 ---
 
+## Screenshots
+
+![Dashboard](docs/dashboard.png)
+
+![Issue Certificate](docs/issue-certificate.png)
+
+![Certificate Issued](docs/certificate-issued.png)
+
+![Verify Result](docs/verify-result.png)
+
+![Certificate Sample](docs/certificate-sample.png)
+
+---
+
 ## Features
 
 - **Issue certificates** — canvas designer or upload your own PDF template; QR + cert ID are overlaid automatically
