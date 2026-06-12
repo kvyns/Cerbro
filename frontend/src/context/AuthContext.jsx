@@ -1,7 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import {
+  browserLocalPersistence,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  setPersistence,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -9,15 +11,51 @@ import {
 } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 
+// ── Cookie helpers ────────────────────────────────────────────────────────────
+const COOKIE_KEY = "cerbro_user";
+
+function writeUserCookie(user) {
+  if (!user) {
+    document.cookie = `${COOKIE_KEY}=; path=/; max-age=0; SameSite=Lax`;
+    return;
+  }
+  const payload = JSON.stringify({
+    uid: user.uid,
+    email: user.email,
+    displayName: user.displayName,
+    photoURL: user.photoURL,
+  });
+  // 30-day expiry, cleared explicitly on logout
+  const maxAge = 60 * 60 * 24 * 30;
+  document.cookie = `${COOKIE_KEY}=${encodeURIComponent(payload)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+}
+
+function readUserCookie() {
+  const match = document.cookie.match(new RegExp(`(?:^|; )${COOKIE_KEY}=([^;]*)`));
+  if (!match) return null;
+  try {
+    return JSON.parse(decodeURIComponent(match[1]));
+  } catch {
+    return null;
+  }
+}
+
+// ── Context ───────────────────────────────────────────────────────────────────
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Seed from cookie so UI renders immediately — Firebase confirms async
+  const cached = readUserCookie();
+  const [user, setUser] = useState(cached);
+  const [loading, setLoading] = useState(!cached); // skip spinner if cached
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u);
+    // Ensure session survives browser restarts
+    setPersistence(auth, browserLocalPersistence).catch(() => {});
+
+    const unsub = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      writeUserCookie(firebaseUser);
       setLoading(false);
     });
     return unsub;
@@ -36,15 +74,18 @@ export function AuthProvider({ children }) {
 
   const loginWithGoogle = () => signInWithPopup(auth, googleProvider);
 
-  const logout = () => signOut(auth);
+  const logout = async () => {
+    writeUserCookie(null);
+    return signOut(auth);
+  };
 
-  const getIdToken = () => user?.getIdToken() ?? Promise.resolve(null);
+  const getIdToken = () => user?.getIdToken?.() ?? Promise.resolve(null);
 
   return (
     <AuthContext.Provider
       value={{ user, loading, login, register, loginWithGoogle, logout, getIdToken }}
     >
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }

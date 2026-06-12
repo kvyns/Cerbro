@@ -197,6 +197,7 @@ function AppRoutes() {
 }
 
 function CertificateVerifier() {
+  const { user } = useAuth();
   const scannerRef = useRef(null);
   const [scannerOpen, setScannerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -639,18 +640,29 @@ function CertificateVerifier() {
               >
                 Pricing
               </a>
-              <a
-                href="/login"
-                className="text-sm font-semibold text-steel dark:text-fog/90 hover:text-ink dark:hover:text-white transition"
-              >
-                Sign In
-              </a>
-              <a
-                href="/register"
-                className="text-sm font-semibold text-white bg-mint hover:bg-mint/90 px-4 py-1.5 rounded-lg transition"
-              >
-                Sign Up
-              </a>
+              {user ? (
+                <a
+                  href="/dashboard"
+                  className="text-sm font-semibold text-white bg-mint hover:bg-mint/90 px-4 py-1.5 rounded-lg transition"
+                >
+                  Dashboard
+                </a>
+              ) : (
+                <>
+                  <a
+                    href="/login"
+                    className="text-sm font-semibold text-steel dark:text-fog/90 hover:text-ink dark:hover:text-white transition"
+                  >
+                    Sign In
+                  </a>
+                  <a
+                    href="/register"
+                    className="text-sm font-semibold text-white bg-mint hover:bg-mint/90 px-4 py-1.5 rounded-lg transition"
+                  >
+                    Sign Up
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </div>
