@@ -34,42 +34,6 @@ Live → **[cerbro.vercel.app](https://cerbro.vercel.app)**
 
 ---
 
-## Project Structure
-
-```
-Cerbro/
-├── frontend/                   # React + Vite app
-│   ├── public/
-│   ├── src/
-│   │   ├── api/                # Centralised API layer
-│   │   │   ├── client.js       # Base fetch wrapper + env constants
-│   │   │   ├── certificates.js
-│   │   │   ├── projects.js
-│   │   │   └── users.js
-│   │   ├── context/            # AuthContext, ThemeContext
-│   │   ├── App.jsx             # Routing + certificate verifier
-│   │   ├── Dashboard.jsx
-│   │   ├── IssueCertificate.jsx
-│   │   ├── Settings.jsx
-│   │   └── firebase.js
-│   ├── .env.example
-│   └── vite.config.js
-│
-└── backend/                    # FastAPI app
-    ├── routers/
-    │   ├── certificates.py     # Issue (single + bulk), verify, list
-    │   ├── projects.py         # Project folders + prefix generation
-    │   └── users.py            # Credits, export, delete account
-    ├── auth.py                 # Firebase Admin token verification
-    ├── database.py             # Motor MongoDB client
-    ├── main.py                 # App entry, CORS
-    ├── generate_secure_overlays.py
-    ├── requirements.txt
-    └── .env.example
-```
-
----
-
 ## Local Setup
 
 ### Prerequisites
