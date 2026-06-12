@@ -183,21 +183,21 @@ function DashboardContent({
             <a href="/" className="font-display text-2xl font-bold text-ink dark:text-fog hover:text-steel dark:hover:text-mint transition">
               Cerbro
             </a>
-            <div className="flex gap-4 items-center">
-              <button onClick={onNotificationsClick} className="text-steel hover:text-ink transition">
+            <div className="flex gap-2 sm:gap-4 items-center">
+              <button onClick={onNotificationsClick} className="text-steel hover:text-ink transition p-1">
                 <Bell size={20} />
               </button>
-              <button onClick={onSettingsClick} className="text-steel hover:text-ink transition">
+              <button onClick={onSettingsClick} className="text-steel hover:text-ink transition p-1">
                 <Settings size={20} />
               </button>
               {user.photoURL ? (
-                <img src={user.photoURL} alt={user.name} className="w-10 h-10 rounded-full object-cover" />
+                <img src={user.photoURL} alt={user.name} className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover" />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-mint flex items-center justify-center text-white font-bold text-sm">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-mint flex items-center justify-center text-white font-bold text-sm">
                   {user.initials}
                 </div>
               )}
-              <button onClick={onLogout} className="text-steel hover:text-danger transition">
+              <button onClick={onLogout} className="text-steel hover:text-danger transition p-1">
                 <LogOut size={20} />
               </button>
             </div>
@@ -208,16 +208,16 @@ function DashboardContent({
       <main className="relative mx-auto flex w-full max-w-6xl flex-col px-4 pb-12 pt-8 sm:px-8">
         {/* User Profile Header */}
         <div className="mb-8 animate-rise rounded-3xl border border-steel/10 dark:border-steel/40 bg-white/70 dark:bg-ink/80 p-6 shadow-soft backdrop-blur-md sm:p-8">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
             <div>
-              <h1 className="font-display text-3xl font-bold text-ink dark:text-fog mb-1">
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-ink dark:text-fog mb-1">
                 Welcome back, {user.name || user.email}!
               </h1>
               <p className="text-steel/70 dark:text-fog/60 text-sm">
                 {user.email}
               </p>
             </div>
-            <a href="/issue-certificate" className="bg-mint hover:bg-mint/90 text-white font-semibold py-2.5 px-6 rounded-xl transition flex items-center gap-2">
+            <a href="/issue-certificate" className="bg-mint hover:bg-mint/90 text-white font-semibold py-2.5 px-6 rounded-xl transition flex items-center justify-center gap-2 sm:w-auto w-full">
               <Plus size={18} />
               Issue Certificate
             </a>
@@ -225,9 +225,9 @@ function DashboardContent({
         </div>
 
         {/* Stats Cards */}
-        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mb-8 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Certificates Issued */}
-          <div className="animate-rise rounded-3xl border border-steel/10 bg-white/80 p-6 shadow-soft backdrop-blur-sm [animation-delay:100ms]">
+          <div className="animate-rise rounded-3xl border border-steel/10 bg-white/80 p-4 sm:p-6 shadow-soft backdrop-blur-sm [animation-delay:100ms]">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-steel/70">Certificates Issued</h3>
               <FileText className="text-amber" size={20} />
@@ -237,7 +237,7 @@ function DashboardContent({
           </div>
 
           {/* Vault Certificates */}
-          <div className="animate-rise rounded-3xl border border-steel/10 bg-white/80 p-6 shadow-soft backdrop-blur-sm [animation-delay:150ms]">
+          <div className="animate-rise rounded-3xl border border-steel/10 bg-white/80 p-4 sm:p-6 shadow-soft backdrop-blur-sm [animation-delay:150ms]">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-steel/70">Your Certificates</h3>
               <Archive className="text-mint" size={20} />
@@ -247,7 +247,7 @@ function DashboardContent({
           </div>
 
           {/* Credits Available */}
-          <div className="animate-rise rounded-3xl border border-steel/10 bg-white/80 p-6 shadow-soft backdrop-blur-sm [animation-delay:200ms]">
+          <div className="animate-rise rounded-3xl border border-steel/10 bg-white/80 p-4 sm:p-6 shadow-soft backdrop-blur-sm [animation-delay:200ms]">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-steel/70">Credits Available</h3>
               <CreditCard className="text-amber" size={20} />
@@ -262,7 +262,7 @@ function DashboardContent({
           </div>
 
           {/* This month */}
-          <div className="animate-rise rounded-3xl border border-steel/10 bg-white/80 p-6 shadow-soft backdrop-blur-sm [animation-delay:250ms]">
+          <div className="animate-rise rounded-3xl border border-steel/10 bg-white/80 p-4 sm:p-6 shadow-soft backdrop-blur-sm [animation-delay:250ms]">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-steel/70">This Month</h3>
               <TrendingUp className="text-mint" size={20} />
@@ -287,48 +287,26 @@ function DashboardContent({
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 border-b border-steel/10">
-          <div className="flex gap-8">
-            <button
-              onClick={() => setActiveTab("overview")}
-              className={`py-3 font-semibold text-sm transition-colors ${
-                activeTab === "overview"
-                  ? "text-ink border-b-2 border-mint -mb-1"
-                  : "text-steel/70 hover:text-steel"
-              }`}
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => setActiveTab("issued")}
-              className={`py-3 font-semibold text-sm transition-colors ${
-                activeTab === "issued"
-                  ? "text-ink border-b-2 border-mint -mb-1"
-                  : "text-steel/70 hover:text-steel"
-              }`}
-            >
-              Certificates Issued
-            </button>
-            <button
-              onClick={() => setActiveTab("vault")}
-              className={`py-3 font-semibold text-sm transition-colors ${
-                activeTab === "vault"
-                  ? "text-ink border-b-2 border-mint -mb-1"
-                  : "text-steel/70 hover:text-steel"
-              }`}
-            >
-              Your Vault
-            </button>
-            <button
-              onClick={() => setActiveTab("credits")}
-              className={`py-3 font-semibold text-sm transition-colors ${
-                activeTab === "credits"
-                  ? "text-ink border-b-2 border-mint -mb-1"
-                  : "text-steel/70 hover:text-steel"
-              }`}
-            >
-              Credits
-            </button>
+        <div className="mb-6 border-b border-steel/10 overflow-x-auto">
+          <div className="flex gap-4 sm:gap-8 min-w-max">
+            {[
+              { key: "overview", label: "Overview" },
+              { key: "issued", label: "Issued" },
+              { key: "vault", label: "Vault" },
+              { key: "credits", label: "Credits" },
+            ].map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`py-3 whitespace-nowrap font-semibold text-sm transition-colors ${
+                  activeTab === key
+                    ? "text-ink border-b-2 border-mint -mb-px"
+                    : "text-steel/70 hover:text-steel"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -366,24 +344,25 @@ function DashboardContent({
                         <table className="w-full text-sm">
                           <thead>
                             <tr className="bg-steel/5 border-b border-steel/10 text-xs text-steel/60 uppercase tracking-wide">
-                              <th className="py-2.5 px-4 text-left">Recipient</th>
-                              <th className="py-2.5 px-4 text-left">Cert ID</th>
-                              <th className="py-2.5 px-4 text-left">Position</th>
-                              <th className="py-2.5 px-4 text-left">Date</th>
-                              <th className="py-2.5 px-4 text-right">Link</th>
+                              <th className="py-2.5 px-3 sm:px-4 text-left">Recipient</th>
+                              <th className="py-2.5 px-3 sm:px-4 text-left hidden sm:table-cell">Cert ID</th>
+                              <th className="py-2.5 px-3 sm:px-4 text-left hidden sm:table-cell">Position</th>
+                              <th className="py-2.5 px-3 sm:px-4 text-left">Date</th>
+                              <th className="py-2.5 px-3 sm:px-4 text-right">Link</th>
                             </tr>
                           </thead>
                           <tbody>
                             {certs.map((cert) => (
                               <tr key={cert.certificate_id} className="border-b border-steel/5 hover:bg-fog/50">
-                                <td className="py-3 px-4">
+                                <td className="py-3 px-3 sm:px-4">
                                   <p className="font-semibold text-ink">{cert.name}</p>
                                   {cert.entry_number && <p className="text-xs text-steel/50">{cert.entry_number}</p>}
+                                  <p className="text-xs text-steel/50 sm:hidden">{cert.position || ""}</p>
                                 </td>
-                                <td className="py-3 px-4 font-mono text-xs text-steel/60 max-w-[180px] truncate">{cert.certificate_id}</td>
-                                <td className="py-3 px-4 text-steel/70">{cert.position || "—"}</td>
-                                <td className="py-3 px-4 text-steel/60 text-xs">{new Date(cert.timestamp_utc).toLocaleDateString()}</td>
-                                <td className="py-3 px-4 text-right">
+                                <td className="py-3 px-3 sm:px-4 font-mono text-xs text-steel/60 max-w-[180px] truncate hidden sm:table-cell">{cert.certificate_id}</td>
+                                <td className="py-3 px-3 sm:px-4 text-steel/70 hidden sm:table-cell">{cert.position || "—"}</td>
+                                <td className="py-3 px-3 sm:px-4 text-steel/60 text-xs">{new Date(cert.timestamp_utc).toLocaleDateString()}</td>
+                                <td className="py-3 px-3 sm:px-4 text-right">
                                   {cert.verification_url && (
                                     <a href={cert.verification_url} target="_blank" rel="noopener noreferrer"
                                       className="text-steel/50 hover:text-mint transition">
@@ -472,28 +451,31 @@ function DashboardContent({
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-steel/10">
-                      <th className="text-left py-3 px-4 font-semibold text-steel/70">Recipient</th>
-                      <th className="text-left py-3 px-4 font-semibold text-steel/70">Event</th>
-                      {showOrganizer && <th className="text-left py-3 px-4 font-semibold text-steel/70">Organizer</th>}
-                      <th className="text-left py-3 px-4 font-semibold text-steel/70">Date</th>
-                      <th className="text-left py-3 px-4 font-semibold text-steel/70">Certificate ID</th>
-                      <th className="text-right py-3 px-4 font-semibold text-steel/70">Actions</th>
+                      <th className="text-left py-3 px-3 sm:px-4 font-semibold text-steel/70">Recipient</th>
+                      <th className="text-left py-3 px-3 sm:px-4 font-semibold text-steel/70 hidden sm:table-cell">Event</th>
+                      {showOrganizer && <th className="text-left py-3 px-3 sm:px-4 font-semibold text-steel/70 hidden md:table-cell">Organizer</th>}
+                      <th className="text-left py-3 px-3 sm:px-4 font-semibold text-steel/70">Date</th>
+                      <th className="text-left py-3 px-3 sm:px-4 font-semibold text-steel/70 hidden md:table-cell">Certificate ID</th>
+                      <th className="text-right py-3 px-3 sm:px-4 font-semibold text-steel/70">Link</th>
                     </tr>
                   </thead>
                   <tbody>
                     {issuedCertificates.map((cert) => (
                       <tr key={cert.certificate_id} className="border-b border-steel/10 last:border-0 hover:bg-fog transition">
-                        <td className="py-3 px-4 font-medium">{cert.name}</td>
-                        <td className="py-3 px-4">{cert.event}</td>
-                        {showOrganizer && <td className="py-3 px-4 text-steel/70">{cert.organizer}</td>}
-                        <td className="py-3 px-4 text-steel/60">{new Date(cert.timestamp_utc).toLocaleDateString()}</td>
-                        <td className="py-3 px-4">
+                        <td className="py-3 px-3 sm:px-4">
+                          <p className="font-medium text-ink">{cert.name}</p>
+                          <p className="text-xs text-steel/50 sm:hidden">{cert.event}</p>
+                        </td>
+                        <td className="py-3 px-3 sm:px-4 hidden sm:table-cell">{cert.event}</td>
+                        {showOrganizer && <td className="py-3 px-3 sm:px-4 text-steel/70 hidden md:table-cell">{cert.organizer}</td>}
+                        <td className="py-3 px-3 sm:px-4 text-steel/60 text-xs">{new Date(cert.timestamp_utc).toLocaleDateString()}</td>
+                        <td className="py-3 px-3 sm:px-4 hidden md:table-cell">
                           <span className="font-mono text-xs text-steel/60 bg-fog px-2 py-1 rounded-lg">{cert.certificate_id}</span>
                         </td>
-                        <td className="py-3 px-4 text-right">
+                        <td className="py-3 px-3 sm:px-4 text-right">
                           {cert.verification_url && (
                             <a href={cert.verification_url} target="_blank" rel="noopener noreferrer"
-                              className="text-steel/60 hover:text-mint transition mr-3 inline-block">
+                              className="text-steel/60 hover:text-mint transition inline-block">
                               <Share2 size={16} />
                             </a>
                           )}
@@ -539,14 +521,14 @@ function DashboardContent({
           <div className="space-y-6 animate-rise">
             {/* Credit Balance */}
             <div className="rounded-3xl border border-steel/10 bg-white/80 p-6 shadow-soft backdrop-blur-sm">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
                 <div>
                   <p className="text-steel/70 text-sm font-semibold mb-1">Current Balance</p>
                   <p className={`font-display text-4xl font-bold ${credits === 0 ? "text-danger" : "text-ink"}`}>
                     {credits ?? "…"} Credits
                   </p>
                 </div>
-                <button className="bg-amber hover:bg-amber/90 text-white font-semibold py-2.5 px-6 rounded-xl transition flex items-center gap-2">
+                <button className="bg-amber hover:bg-amber/90 text-white font-semibold py-2.5 px-6 rounded-xl transition flex items-center justify-center gap-2 sm:w-auto w-full">
                   <Plus size={18} />
                   Buy More Credits
                 </button>
