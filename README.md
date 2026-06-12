@@ -55,7 +55,7 @@ npm run dev               # http://localhost:5173
 **`frontend/.env`**
 ```env
 VITE_API_BASE_URL=http://localhost:8000
-VITE_PUBLIC_VERIFY_BASE_URL=https://cerbro.vercel.app
+VITE_PUBLIC_VERIFY_BASE_URL=https://your-frontend.vercel.app
 
 VITE_FIREBASE_API_KEY=
 VITE_FIREBASE_AUTH_DOMAIN=
@@ -92,7 +92,7 @@ FIREBASE_SERVICE_ACCOUNT_JSON={"type":"service_account", ...}
 CERT_SECRET_KEY=<generate with: python -c "import secrets; print(secrets.token_hex(32))">
 CERT_KEY_ID=K1
 CERT_ID_PREFIX=GC2026
-CERT_VERIFY_BASE_URL=https://cerbro.vercel.app/verify
+CERT_VERIFY_BASE_URL=https://your-frontend.vercel.app/verify
 ```
 
 ---
@@ -120,9 +120,10 @@ All routes except `GET /api/certificates/verify` require `Authorization: Bearer 
 ## Bulk Issue CSV Format
 
 ```csv
-name,email,entry_number,position,hall,organizer
-Alice,alice@example.com,101,1st,Hall A,Tech Club
-Bob,bob@example.com,102,2nd,Hall B,Tech Club
+name,entry_number,position,email,mobile_number,hall,organizer
+Alice Johnson,2024CSE0001,1st,alice@example.com,9800000001,Hall A,Tech Club
+Bob Smith,2024CSE0002,2nd,bob@example.com,9800000002,Hall B,Tech Club
+Carol White,2024CSE0003,Participant,carol@example.com,9800000003,Hall C,Tech Club
 ```
 
 Only `name` is required. All other columns are optional and can be set as form defaults.
@@ -136,7 +137,7 @@ Only `name` is required. All other columns are optional and can be set as form d
 **Backend** — deploy to Railway, Render, or any Python host. Set all backend env vars and:
 
 ```env
-ALLOWED_ORIGINS=https://cerbro.vercel.app
+ALLOWED_ORIGINS=https://your-frontend.vercel.app
 ```
 
 ---
